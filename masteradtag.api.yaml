@@ -3,7 +3,7 @@ servers:
   - url: 'https://{host}:{port}/{basepath}'
     variables:
       host:
-        default: https://apis.daznservices.com
+        default: https://tbd.tbd.com
       port:
         default: '443'
       basepath:
