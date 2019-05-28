@@ -458,11 +458,13 @@ components:
           description: |
             List of iso country code where the stream will be broadcast
           example: ["AT", "DE"]
+          minItems: 1
         AdvTV_ExcludeCategory:
           type: array
           description: |
             categories to exclude
           example: ["Gambling", "Alcohol"]
+          minItems: 0
         AdvTV_LiveType:
           type: string
           enum:
@@ -471,6 +473,13 @@ components:
           description: |
             The type of the live event
           example: Live_Broadcast
+        AdvTV_CommentaryLang:
+          type: array
+          description: |
+            A list of languages that are part of the stream delivered for this event. NB until MTA is available
+            there will only ever be one.
+          example: ["DE", "AT"]
+          minItems: 1
         AdvTV_BroadcastType:
           type: string
           enum:
