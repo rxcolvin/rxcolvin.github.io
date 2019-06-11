@@ -352,11 +352,6 @@ components:
           description: |
             nap value
           example: 1
-        excl_cat:
-          type: array
-          description: |
-            categories to exclude
-          example: ["Gambling", "Alcohol"]
         pmad:
           type: string
           description: |
@@ -377,6 +372,12 @@ components:
           description: |
             video position
           example: preroll
+        ptpln:
+          type: string
+          description: |
+            The id of the template used to create the break structure in WoN
+          example: 131236556
+
 
     LiveBackupMasterAdTagData:
       allOf:
@@ -416,6 +417,11 @@ components:
     BaseCustomValues:
       type: object
       properties:
+        excl_cat:
+          type: array
+          description: |
+            categories to exclude
+          example: ["Gambling", "Alcohol"]
         AdvTV_Sport:
           type: string
           format: uuid
@@ -462,7 +468,7 @@ components:
         AdvTV_ExcludeCategory:
           type: array
           description: |
-            categories to exclude
+            categories to exclude, but with a different key!
           example: ["Gambling", "Alcohol"]
           minItems: 0
         AdvTV_LiveType:
