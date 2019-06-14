@@ -12,13 +12,15 @@ info:
   version: "0.0.1-draft"
   title: DAZN External Master Ad-Tag API
   description: |
-    The DAZN Master Ad-Tag API presents requests that allow master ad-tag data for a given event scheduled on a DAZN region
+    The DAZN Master Ad-Tag API presents requests that allow master ad-tag data for a given live or non-live (vod)
+    event scheduled on a DAZN region
     to be retrieved for different playout types. In particular, for a live event ad tag data can be retrieved for
     either a Live Backup (aka regional) playout or Live DAI playout.
 
     The master ad-tag data can be requested in two formats: either as a json document that contains each component
     element of the ad-tag or formed into a query string that can be appended to the ad manager endpoint to create
-    the full ad-request url.
+    the full ad-request url; but note the the ad-tag version is not available for Vod. Also, note that for VoD the data
+    returned for MFL entities uses the description of the entity rather than the UUID
 
     For Live Events the caller may present the unique fixture UUID and a region identifier which can resolve to a given
     event that has been scheduled on the platform. (In future, this API will allow a unique event id to be passed to
@@ -165,6 +167,7 @@ paths:
       tags:
         - master adtag data
       summary: >
+        THIS IS WORK IN PROGRESS
         Get the data that is used in the masteradtag for a vod content.
         *NB The request parameters and
         response described here are placeholders because the exact requirements are unknown*
@@ -181,29 +184,37 @@ paths:
             type: string
           example: DACH
           required: true
-        - name: fixtureUUID
+        - name: assetType
           in: query
           description: |
-            The UUID of the MFL Fixture for which the master ad-tag is requested.
+            The type of asset the item of Vod is linked with.
+          schema:
+            type: string
+            enum:
+              - FIXTURE
+              - COMPETITION
+              - CONTESTANT
+              - SPORT
+              - TOURNAMENTCALENDAR
+        - name: assetUUID
+          in: query
+          description: |
+            The UUID of the asset which the master ad-tag is requested.
           schema:
             type: string
             format: uuid
           example: 2423hhduwyqutrqtywue
           required: true
-        - name: platform
+        - name: eventId
           in: query
           description: |
-            The platform that the requested event is for. (NB - this is a placeholder for future use and the
-            values here (apart from OTT) are speculative.
+            The Id of the Vod Event or the related Media Asset ID
           schema:
             type: string
-            enum:
-              - OTT
-              - LINEAR
-              - OFFPLATFORM
-            default:
-          example: OTT
-          required: false
+            format: wonId
+          example: 123432323
+          required: true
+
 
       responses:
         '200':
@@ -243,7 +254,6 @@ paths:
             enum:
               - livebackup
               - livedai
-              - vod
           example: livebackup
           required: true
         - name: location
@@ -406,13 +416,7 @@ components:
             cust_params:
               $ref: '#/components/schemas/LiveDaiCustomValues'
 
-    VodMasterAdTagData:
-      allOf:
-        - $ref: '#/components/schemas/BaseMasterAdTagData'
-        - type: object
-          properties:
-            cust_params:
-              $ref: '#/components/schemas/LiveVodCustomValues'
+
 
     BaseCustomValues:
       type: object
@@ -465,12 +469,12 @@ components:
             List of iso country code where the stream will be broadcast
           example: ["AT", "DE"]
           minItems: 1
-        AdvTV_ExcludeCategory:
-          type: array
-          description: |
-            categories to exclude, but with a different key!
-          example: ["Gambling", "Alcohol"]
-          minItems: 0
+#        AdvTV_ExcludeCategory:
+#          type: array
+#          description: |
+#            categories to exclude, but with a different key!
+#          example: ["Gambling", "Alcohol"]
+#          minItems: 0
         AdvTV_LiveType:
           type: string
           enum:
@@ -520,9 +524,179 @@ components:
       allOf:
         - $ref: '#/components/schemas/BaseCustomValues'
 
-    LiveVodCustomValues:
-      allOf:
-        - $ref: '#/components/schemas/BaseCustomValues'
+
+# VoD data
+    VodMasterAdTagData:
+      type: object
+      properties:
+        cust_params:
+          $ref: '#/components/schemas/VodCustomValues'
+        description_url:
+          type: string
+          description: |
+            The description url
+          example: 'http://dazn.com/foo'
+        env:
+          type: string
+          description: |
+            The env
+          example: vp
+        gdfp_req:
+          type: string
+          description: |
+            The
+          example: 1
+        iu:
+          type: string
+          description: |
+            Related ad unit
+          example: '/DAZN-Network/TBD'
+        sz:
+          type: string
+          description: |
+            The output
+          example: 4k
+        unviewed_position_start:
+          type: string
+          description: |
+            The unview position start
+          example: 1
+        url:
+          type: string
+          description: |
+            the url
+          example:
+            http://dazn.com
+        nofb:
+          type: string
+          description: |
+            nofb value
+          example: 1
+        npa:
+          type: string
+          description: |
+            nap value
+          example: 1
+        pmad:
+          type: string
+          description: |
+            pmad
+          example: 0
+        pmnd:
+          type: string
+          description: |
+            pmnd
+          example: 0
+        vad_type:
+          type: string
+          description: |
+            video ad type
+          example: linear
+        vpos :
+          type: string
+          description: |
+            video position
+          example: preroll
+
+
+    VodCustomValues:
+      type: object
+      properties:
+        excl_cat:
+          type: array
+          description: |
+            categories to exclude
+          example: ["Gambling", "Alcohol"]
+        AdvTV_Sport:
+          type: string
+          format: uuid
+          description: |
+           Name MFL sport
+          example: Soccer
+        AdvTV_Competition:
+          type: string
+          format: uuid
+          description: |
+            Name of the MFL Competition
+          example: Primera División-Men-Spain
+        AdvTV_Season:
+          type: string
+          format: uuid
+          description: |
+            Name of the  MLF tournament calendar
+          example: Primera División 2018-2019-Men-Spain
+        AdvTV_Stage:
+          type: string
+          format: uuid
+          description: |
+            Name of the MLF calendar stage
+          example: Regular Season (Men, Primera División, Primera División 2018/2019
+        AdvTV_Competitors:
+          type: array
+          format: uuid
+          description: |
+            List of MFL contestant Names
+          example: ["Leganés-Soccer-Men-Spain"]
+        AdvTV_MFL_ID:
+          type: string
+          format: uuid
+          description: |
+            MFL Fixture Name
+          example: Chicago Cubs v Boston Red Sox
+        AdvTV_BroadcastCountry:
+          type: array
+          format: iso-country-code
+          description: |
+            List of iso country code where the stream will be broadcast
+          example: ["AT", "DE"]
+          minItems: 1
+        #        AdvTV_ExcludeCategory:
+        #          type: array
+        #          description: |
+        #            categories to exclude, but with a different key!
+        #          example: ["Gambling", "Alcohol"]
+        #          minItems: 0
+        AdvTV_LiveType:
+          type: string
+          enum:
+            - Live_Broadcast
+            - Delayed_Broadcast
+          description: |
+            The type of the live event
+          example: Live_Broadcast
+        AdvTV_CommentaryLang:
+          type: array
+          description: |
+            A list of languages that are part of the stream delivered for this event. NB until MTA is available
+            there will only ever be one.
+          example: ["DE", "AT"]
+          minItems: 1
+        AdvTV_BroadcastType:
+          type: string
+          enum:
+            - World_Feed
+            - Host_Feed
+          description: |
+            Broadcast type
+          example: World_Feed
+        AdvTV_RightsHolder:
+          type: string
+          format: uuid
+          description: |
+            UUID of the Rights holder
+          example: 123567009
+        AdvTV_BroadcastTier:
+          type: string
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+          description: |
+            Broadcast Tier
+          example: 5
+
 
     BaseErrorProperties:
       type:  object
