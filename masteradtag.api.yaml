@@ -615,34 +615,29 @@ components:
           example: Soccer
         AdvTV_Competition:
           type: string
-          format: uuid
           description: |
-            Name of the MFL Competition
-          example: Primera División-Men-Spain
+            Unique-ish description of the MFL Competition along with the UUID
+          example: Primera División-Men-Spain-9492349idusyuyiwsoe
         AdvTV_Season:
           type: string
-          format: uuid
           description: |
             Name of the  MLF tournament calendar
-          example: Primera División 2018-2019-Men-Spain
+          example: Primera División 2018-2019-Men-Spain-2429iiiedui78435546
         AdvTV_Stage:
           type: string
-          format: uuid
           description: |
-            Name of the MLF calendar stage
-          example: Regular Season (Men, Primera División, Primera División 2018/2019
+            Unique-ish dfescription of the f the MLF calendar stage along with the UUID
+          example: Regular Season-Men-Primera División-Primera División 2018/2019-iieuwwe766239400
         AdvTV_Competitors:
           type: array
-          format: uuid
           description: |
             List of MFL contestant Names
-          example: ["Leganés-Soccer-Men-Spain"]
-        AdvTV_MFL_ID:
+          example: ["Leganés-Soccer-Men-Spain-89483498393829"]
+        AdvTV_Fixture:
           type: string
-          format: uuid
           description: |
             MFL Fixture Name
-          example: Chicago Cubs v Boston Red Sox
+          example: Chicago Cubs v Boston Red Sox-98239348904888324
         AdvTV_BroadcastCountry:
           type: array
           format: iso-country-code
@@ -656,14 +651,15 @@ components:
         #            categories to exclude, but with a different key!
         #          example: ["Gambling", "Alcohol"]
         #          minItems: 0
-        AdvTV_LiveType:
+        AdvTV_VodType:
           type: string
           enum:
-            - Live_Broadcast
-            - Delayed_Broadcast
+            - Catch Up
+            - Highlights
+            - Shoulder
           description: |
-            The type of the live event
-          example: Live_Broadcast
+            The type of the Vod event
+          example: Highlights
         AdvTV_CommentaryLang:
           type: array
           description: |
