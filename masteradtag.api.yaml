@@ -1,13 +1,12 @@
 openapi: 3.0.0
 servers:
-  - url: 'https://{host}:{port}/{basepath}'
-    variables:
-      host:
-        default: https://tbd.tbd.com
-      port:
-        default: '443'
-      basepath:
-        default: tbc
+  - url: 'https://api.event.staging.daznservices.com'
+    description: |
+      Staging (pre-production) version
+  - url: 'https://api.event.daznservices.com'
+    description: |
+      Production (not available yet)
+
 info:
   version: "0.0.1-draft"
   title: DAZN External Ad Data  API
@@ -21,6 +20,10 @@ info:
 
     For Vod, the data returned is not master ad tag related but represents values that are included in
     the MRSS file presented to Google, typically containing unique descriptions of MFL entites with the UUIDs appended.
+
+    *Staging*: https://api.event.staging.daznservices.com
+
+    *Production* (not available yet): https://api.event.daznservices.com
 
 security:
   - ApiKeyAuth: []
