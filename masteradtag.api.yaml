@@ -164,11 +164,21 @@ paths:
       tags:
         - vod ad data
       summary: >
-        THIS IS WORK IN PROGRESS
         Get ad related properties associated with a Vod Event or relating to a given region and fixture.
       description: |
         A  request that returns a single a JSON document that presents all the vod ad related  values that will be required
-         in a master adtag related to a given asss type, location and fixtureUUID.
+        in a master adtag related to a given asss type, location and fixtureUUID.
+
+        NB: In the short term because there is no direct link between a non-live event in WoN and article/vod feeds that
+        are used to source non-live events we require the API to be able to handle the situation where the API is presented
+        with a MFL id from any type of asset.
+
+        In the case the asset is a fixture then the ad-tag data can be derived from the event data.
+
+        For other types mfl related ad-tag data can be derived using the given mfl data and contractual compliance data will be
+        calculated using a statically configured lookup table for competitions, tournament calendar and contestant.
+        If only a sport is provided then no contractual compliance data can be provided.
+
 
       parameters:
         - name: location
@@ -179,7 +189,15 @@ paths:
             type: string
           example: DACH
           required: false
-        - name: assetType
+        - name: vodType
+          in: query
+          description: |
+            The Vod Type (Could be a enum? Not clear what the range of Vod Types is and how it will be propagated)
+          schema:
+            type: string
+          example: HIGHLIGHTS
+          required: false
+        - name: mflType
           in: query
           description: |
             The type of asset the item of Vod is linked with.
@@ -192,7 +210,7 @@ paths:
               - SPORT
               - TOURNAMENTCALENDAR
             default: FIXTURE
-        - name: assetUuid
+        - name: mflUuid
           in: query
           description: |
             The UUID related MFL Asset .
