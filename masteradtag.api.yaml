@@ -21,9 +21,9 @@ info:
     For Vod, the data returned is not master ad tag related but represents values that are included in
     the MRSS file presented to Google, typically containing unique descriptions of MFL entites with the UUIDs appended.
 
-    *Staging*: https://api.event.staging.daznservices.com
+    *Staging*: https://eventapi.stage.daznservices.com
 
-    *Production* (not available yet): https://api.event.daznservices.com
+    *Production* (not available yet): https://eventapi.daznservices.com
 
 security:
   - ApiKeyAuth: []
