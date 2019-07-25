@@ -180,6 +180,7 @@ paths:
         calculated using a statically configured lookup table for competitions, tournament calendar and contestant.
         If only a sport is provided then no contractual compliance data can be provided.
 
+        *** THIS FUNCTIONALITY IS STILL TO BE DEVELOPED ***
 
       parameters:
         - name: location
