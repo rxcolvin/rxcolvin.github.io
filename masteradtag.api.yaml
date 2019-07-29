@@ -172,12 +172,27 @@ paths:
 
         NB: In the short term because there is no direct link between a non-live event in WoN and article/vod feeds that
         are used to source non-live events we require the API to be able to handle the situation where the API is presented
-        with a MFL id from any type of asset.
+        with a MFL ids from various MFL assets types:
+        * Fixture
+        * Sport
+        * Competition
+        * Contestant
 
-        In the case the asset is a fixture then the ad-tag data can be derived from the event data.
+        In the case the asset is a fixture then the ad-tag data can be derived from the event data. In this case
+        presenting any other of the asset ids is invalid.
 
-        For other types mfl related ad-tag data can be derived using the given mfl data and contractual compliance data will be
+        Otherwise the following combination of uuids is possible
+        * Competition + zero or more contestants (the sport is implied by the competition)
+        * One or more contestants
+        * Sport
+
+        All other combinatons all invalid.
+
+        For non-fixture assets then related ad-tag data can be derived using the given mfl data and contractual compliance data will be
         calculated using a statically configured lookup table for competitions, tournament calendar and contestant.
+
+        NB At the time of writing such configured compliance data is only required for NFL games.
+
         If only a sport is provided then no contractual compliance data can be provided.
 
         *** THIS FUNCTIONALITY IS STILL TO BE DEVELOPED ***
@@ -199,28 +214,44 @@ paths:
             type: string
           example: HIGHLIGHTS
           required: false
-        - name: mflType
+        - name: fixtureUuid
           in: query
           description: |
-            The type of asset the item of Vod is linked with.
-          schema:
-            type: string
-            enum:
-              - FIXTURE
-              - COMPETITION
-              - CONTESTANT
-              - SPORT
-              - TOURNAMENTCALENDAR
-            default: FIXTURE
-        - name: mflUuid
-          in: query
-          description: |
-            The UUID related MFL Asset .
+            The UUID related to an  MFL Fixture .
           schema:
             type: string
             format: uuid
           example: 2423hhduwyqutrqtywue
           required: false
+        - name: sportUiid
+          in: query
+          description: |
+            The UUID related to an MFL Sport .
+          schema:
+            type: string
+            format: uuid
+          example: 2423hhduwyqutrqtywue
+          required: false
+        - name: competitionUuid
+          in: query
+          description: |
+            The UUID of an MFL Competition .
+          schema:
+            type: string
+            format: uuid
+          example: 2423hhduwyqutrqtywue
+          required: false
+        - name: contestantUuid
+          in: query
+          description: |
+            Zero or more contestant UUIDs.
+          schema:
+            type: array
+            format: uuid
+          example: 2423hhduwyqutrqtywue
+          required: false
+          style: form
+          explode: false
         - name: eventId
           in: query
           description: |
