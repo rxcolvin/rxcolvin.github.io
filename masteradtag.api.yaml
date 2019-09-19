@@ -23,7 +23,7 @@ info:
 
     *Staging*: https://eventapi.stage.daznservices.com
 
-    *Production* (not available yet): https://eventapi.daznservices.com
+    *Production*  https://eventapi.daznservices.com
 
 security:
   - ApiKeyAuth: []
@@ -194,8 +194,6 @@ paths:
         NB At the time of writing such configured compliance data is only required for NFL games.
 
         If only a sport is provided then no contractual compliance data can be provided.
-
-        *** THIS FUNCTIONALITY IS STILL TO BE DEVELOPED ***
 
       parameters:
         - name: location
