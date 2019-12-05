@@ -1,9 +1,9 @@
 openapi: 3.0.0
 servers:
-  - url: 'https://api.event.staging.daznservices.com'
+  - url: 'https://eventapi.stage.daznservices.com'
     description: |
       Staging (pre-production) version
-  - url: 'https://api.event.daznservices.com'
+  - url: 'https://eventapi.daznservices.com'
     description: |
       Production (not available yet)
 
@@ -83,7 +83,7 @@ paths:
                 $ref: '#/components/schemas/LiveBackupMasterAdTagData'
         '400':
           $ref: '#/components/responses/Error400'
-        '401':
+        '403':
           $ref: '#/components/responses/Error403'
         '404':
           $ref: '#/components/responses/Error404'
@@ -151,7 +151,7 @@ paths:
                 $ref: '#/components/schemas/LiveDaiMasterAdTagData'
         '400':
           $ref: '#/components/responses/Error400'
-        '401':
+        '403':
           $ref: '#/components/responses/Error403'
         '404':
           $ref: '#/components/responses/Error404'
@@ -269,7 +269,7 @@ paths:
                 $ref: '#/components/schemas/VodAdValues'
         '400':
           $ref: '#/components/responses/Error400'
-        '401':
+        '403':
           $ref: '#/components/responses/Error403'
         '404':
           $ref: '#/components/responses/Error404'
@@ -334,7 +334,7 @@ paths:
                     example: "env=vp&gdfp_req=1&output=vast&iu=/1234/video-demo&sz=999x999v&unviewed_position_start=1&ciu_szs=728x90,300x250"
         '400':
           $ref: '#/components/responses/Error400'
-        '401':
+        '403':
           $ref: '#/components/responses/Error403'
         '404':
           $ref: '#/components/responses/Error404'
@@ -761,7 +761,7 @@ components:
                   Error
 
     Error400:
-      description: Error returned when the client request is not in a valid format or contains invalid data
+      description: The request is not in a valid format or contains missing or invalid data
       headers:
         X-Status-Code:
           description: >-
@@ -782,14 +782,15 @@ components:
                     type: integer
                     format: int32
                     description: |
-                      * 40050: The request contains an unknown query parameter
-                      * 40051: No value was passed for a mandatory field
-                      * 40052: Value for a field was passed, but it was not a valid value: see documentation
+                      *Request Parameter Errors*
+                      * 40001: Missing mandatory request parameter
+                      * 40002: Unknown request parameter
+                      * 40003: No value specified for the request parameter
                     enum:
-                      - 40050
-                      - 40051
-                      - 40052
-                    example: 40051
+                      - 40001
+                      - 40002
+                      - 40003
+                    example: 40001
 
                   fieldName:
                     type: string
@@ -817,12 +818,13 @@ components:
                   code:
                     type: number
                     description: |
-                      * 40301: The calling client does not have an allowed IP address
+                      * 40301: Authenticaton or permission failure
                     enum:
                       - 40301
+                    example: 40301
 
     Error404:
-      description: The request resource was not found
+      description: The request resource was not found or dependent resources not found
       headers:
         X-Status-Code:
           description: >-
@@ -841,14 +843,69 @@ components:
                   code:
                     type: number
                     description: |
-                      * 40451: An MLF Fixture with the presented UUID does not exist
-                      * 40452: The location cannot be resovled to a single DAZN region
-                      * 40453: The the value in the type parameter is not valid.
+                      * 40401: Event Data Not Found
+                      * 40402: MFL Entity Not Foung
+                      * 40403: Specified location not supported
                     enum:
-                      - 40451
-                      - 40452
-                      - 40453
+                      - 40401
+                      - 40402
+                      - 40403
+                    example: 40401
 
+    Error422:
+      description: The request contained invalid data
+      headers:
+        X-Status-Code:
+          description: >-
+            in case of error containing error code (useful for integration
+            tests to easily retrieve error code)
+          schema:
+            type: number
+      content:
+        application/json:
+          schema:
+            required: [code, message, token]
+            allOf:
+              - $ref: '#/components/schemas/BaseErrorProperties'
+              - type: object
+                properties:
+                  code:
+                    type: number
+                    description: |
+                      * 42200: Invalid request parameter value
+                      * 42202: Combination of request parameters not allowed
+                      * 42210: Invalid path variable value
+                    enum:
+                      - 42200
+                      - 42202
+                      - 42210
+                    example: 42200
+
+
+    Error500:
+      description: An expected error occured
+      headers:
+        X-Status-Code:
+          description: >-
+            in case of error containing error code (useful for integration
+            tests to easily retrieve error code)
+          schema:
+            type: number
+      content:
+        application/json:
+          schema:
+            required: [code, message, token]
+            allOf:
+              - $ref: '#/components/schemas/BaseErrorProperties'
+              - type: object
+                properties:
+                  code:
+                    type: number
+                    description: |
+                      * 50000: An unexpected error occured.
+                    enum:
+                      - 50000
+                    example: 50000
 
     Error503:
       description: Service Unavailable
